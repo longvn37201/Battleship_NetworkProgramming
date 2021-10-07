@@ -1,0 +1,18 @@
+1) Nội dung báo cáo:
+    a) Mô hình hệ thống:
+        - Các thành phần chính:
+            + Client
+            + Server
+            + Model
+        - Sử dụng giao thức TCP/IP
+    b) Các chức năng chính:
+        - Server: khởi tạo 1 Server socket, lắng nghe kết nối từ người chơi, xử lí các thông
+            điệp từ các người chơi, khởi tạo 1 MathRoom
+        - Client: kết nối đăng nhập đến server, gửi lời mời chơi và chơi cùng các người chơi khác
+            thông qua giao diện GUI.
+    c) Thư viện:
+        - Lập trình socket với TCP/IP trong gói java net
+        - Giao diện GUI sử dụng java swing
+
+
+
