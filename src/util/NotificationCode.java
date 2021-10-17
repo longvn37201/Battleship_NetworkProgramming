@@ -1,6 +1,7 @@
 package util;
 
-public class NotificationMessages {
+public class NotificationCode {
+
     public final static int PLACE_SHIPS = 101;
     public final static int YOUR_TURN = 102;
     public final static int OPPONENTS_TURN = 103;

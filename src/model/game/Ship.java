@@ -1,16 +1,18 @@
-package model;
+package model.game;
+
+
+import client.view.ShipView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
-/**
- *
- */
 public class Ship implements Serializable {
+
     private Type type;
     private ArrayList<Square> squares;
     private boolean vertical;
     private int health;
+    private transient ShipView view;
 
     public Ship(Type type) {
         this.type = type;
@@ -19,26 +21,6 @@ public class Ship implements Serializable {
         squares = new ArrayList<Square>();
     }
 
-    //bắn trúng
-    public void gotHit() {
-        health--;
-    }
-
-    //đầu tàu
-    public int[] getTopLeft() {
-        Square firstSquare = squares.get(0);
-        int[] tl = { firstSquare.getX(), firstSquare.getY() };
-        for (int i = 1; i < squares.size(); ++i) {
-            Square s = squares.get(i);
-            if (s.getX() < tl[0]) {
-                tl[0] = s.getX();
-            }
-            if (s.getY() < tl[1]) {
-                tl[1] = s.getY();
-            }
-        }
-        return tl;
-    }
     public int getLength() {
         return type.length;
     }
@@ -55,16 +37,48 @@ public class Ship implements Serializable {
         this.vertical = b;
     }
 
+    //GET all square của tàu
     public ArrayList<Square> getSquares() {
         return squares;
     }
 
     public void setSquare(Square square) {
-        squares.add(square);
+        this.squares.add(square);
+    }
+
+    public void clearSquares() {
+        squares.clear();
+    }
+
+    public void gotHit() {
+        health--;
     }
 
     public boolean isSunk() {
         return (health == 0);
+    }
+
+    public void sink() {
+        health = 0;
+    }
+
+    public int[] getTopLeft() {
+        Square firstSquare = squares.get(0);
+        int[] tl = {firstSquare.getX(), firstSquare.getY()};
+        for (int i = 1; i < squares.size(); ++i) {
+            Square s = squares.get(i);
+            if (s.getX() < tl[0]) {
+                tl[0] = s.getX();
+            }
+            if (s.getY() < tl[1]) {
+                tl[1] = s.getY();
+            }
+        }
+        return tl;
+    }
+
+    public void setView(ShipView view) {
+        this.view = view;
     }
 
     public enum Type {
@@ -73,6 +87,7 @@ public class Ship implements Serializable {
         SUBMARINE(3, "submarine"),
         DESTROYER(3, "destroyer"),
         PATROL_BOAT(2, "patrol boat");
+
         private int length;
         private String name;
 
@@ -84,5 +99,14 @@ public class Ship implements Serializable {
         public String getName() {
             return name;
         }
+    }
+
+    //Cập nhật danh sách ô Square, cho biết vị trí của từng ô trên board.
+    public void updateSquareReferences(Board board) {
+        ArrayList<Square> newSquares = new ArrayList<>();
+        for (Square s : squares) {
+            newSquares.add(board.getSquare(s.getX(), s.getY()));
+        }
+        this.squares = newSquares;
     }
 }

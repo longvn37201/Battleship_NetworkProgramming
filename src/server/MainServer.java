@@ -10,8 +10,9 @@ public class MainServer {
     public MainServer(int portNumber) {
         try (ServerSocket serverSocket = new ServerSocket(portNumber)) {
             System.out.println("SERVER ĐANG CHẠY Ở CỔNG: " + PORT_NUMBER);
+            MatchRoom matchRoom = new MatchRoom();
             while (true) {
-                new PlayerHandler(serverSocket.accept()).start();
+                new Player(serverSocket.accept(), matchRoom).start();
             }
         } catch (IOException e) {
             e.printStackTrace();

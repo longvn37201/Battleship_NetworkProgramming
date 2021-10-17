@@ -1,4 +1,4 @@
-1) Nội dung báo cáo:
+Báo cáo 1
     a) Mô hình hệ thống:
         - Các thành phần chính:
             + Client
@@ -13,6 +13,8 @@
     c) Thư viện:
         - Lập trình socket với TCP/IP trong gói java net
         - Giao diện GUI sử dụng java swing
+
+Báo cáo 2
 
 
 
