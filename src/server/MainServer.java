@@ -8,8 +8,10 @@ import static util.Configs.PORT_NUMBER;
 public class MainServer {
 
     public MainServer(int portNumber) {
-        try (ServerSocket serverSocket = new ServerSocket(portNumber)) {
-            System.out.println("SERVER ĐANG CHẠY Ở CỔNG: " + PORT_NUMBER);
+        try {
+            ServerSocket serverSocket = new ServerSocket(portNumber);
+            System.out.println("SERVER ĐANG CHẠY Ở CỔNG: " + portNumber);
+
             MatchRoom matchRoom = new MatchRoom();
             while (true) {
                 new Player(serverSocket.accept(), matchRoom).start();
@@ -19,7 +21,8 @@ public class MainServer {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         new MainServer(PORT_NUMBER);
     }
+
 }

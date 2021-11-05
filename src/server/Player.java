@@ -106,7 +106,13 @@ public class Player extends Thread {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            if (game != null) {
+                leaveGame();
+            } else {
+                matchRoom.removeWaitingPlayer(this);
+            }
+            matchRoom.removePlayer(this);
+            System.out.println(">> " + socket.getRemoteSocketAddress().toString() + " connected");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -143,8 +149,7 @@ public class Player extends Thread {
     //gui thong bao den client co the kem them Thong tin bo sung
     public void writeNotification(int notificationMessage, String... text) {
         try {
-            NotificationMessage nm = new NotificationMessage(
-                    notificationMessage, text);
+            NotificationMessage nm = new NotificationMessage(notificationMessage, text);
             out.writeObject(nm);
             out.flush();
         } catch (IOException e) {
@@ -162,8 +167,7 @@ public class Player extends Thread {
         requestList.put(requester.getOwnKey(), requester);
         requester.requestedGameKey = this.ownKey;
         System.out.println(">> " + socket.getRemoteSocketAddress().toString() + " " + NotificationCode.NEW_JOIN_GAME_REQUEST + " " + requester.ownKey);
-        writeNotification(NotificationCode.NEW_JOIN_GAME_REQUEST,
-                requester.getOwnKey(), requester.getPlayerName());
+        writeNotification(NotificationCode.NEW_JOIN_GAME_REQUEST, requester.getOwnKey(), requester.getPlayerName());
     }
 
     //  đối thủ chấp nhận một yêu cầu và thông báo cho người chơi

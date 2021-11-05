@@ -24,7 +24,6 @@ public class Game {
     private Timer placementTimer;
     private Timer turnTimer;
 
-
     private boolean gameStarted;
 
     //Khởi tạo 1 game, thông báo cho player tên đối phương, bộ đếm thời gian bắt đầu
@@ -33,12 +32,9 @@ public class Game {
         this.player2 = player2;
         player1.setGame(this);
         player2.setGame(this);
-        player1.writeNotification(OPPONENTS_NAME,
-                player2.getPlayerName());
-        player2.writeNotification(OPPONENTS_NAME,
-                player1.getPlayerName());
-        NotificationMessage placeShipsMessage = new NotificationMessage(
-                PLACE_SHIPS);
+        player1.writeNotification(OPPONENTS_NAME, player2.getPlayerName());
+        player2.writeNotification(OPPONENTS_NAME, player1.getPlayerName());
+        NotificationMessage placeShipsMessage = new NotificationMessage(PLACE_SHIPS);
 
         player1.writeObject(placeShipsMessage);
         System.out.println(">> " + player1.socket.getRemoteSocketAddress().toString() + " " + NotificationCode.PLACE_SHIPS);
@@ -153,18 +149,14 @@ public class Game {
     }
 
     private class PlacementTimerTask extends TimerTask {
-
         @Override
         public void run() {
             if (player1.getBoard() == null & player2.getBoard() == null) {
-                NotificationMessage draw = new NotificationMessage(
-                        NotificationCode.TIMEOUT_DRAW);
+                NotificationMessage draw = new NotificationMessage(NotificationCode.TIMEOUT_DRAW);
                 player1.writeObject(draw);
                 player2.writeObject(draw);
-
                 System.out.println(">> " + player1.socket.getRemoteSocketAddress().toString() + " " + NotificationCode.TIMEOUT_DRAW);
                 System.out.println(">> " + player2.socket.getRemoteSocketAddress().toString() + " " + NotificationCode.TIMEOUT_DRAW);
-
                 killGame();
             } else if (player1.getBoard() == null) {
                 // Player1 failed to place ships in time
@@ -181,17 +173,14 @@ public class Game {
     }
 
     private class TurnTimerTask extends TimerTask {
-
         @Override
         public void run() {
             if (turn != null) {
                 turn.writeNotification(NotificationCode.TIMEOUT_LOSE);
-                getOpponent(turn).writeNotification(
-                        NotificationCode.TIMEOUT_WIN);
+                getOpponent(turn).writeNotification(NotificationCode.TIMEOUT_WIN);
                 killGame();
             }
         }
-
     }
 
 }

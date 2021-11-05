@@ -10,7 +10,7 @@ public class MoveResponseMessage implements Serializable {
 
     private int x;
     private int y;
-        private Ship shipSunk;
+    private Ship shipSunk;
     private boolean hit;
     private boolean ownBoard;
 
@@ -25,17 +25,21 @@ public class MoveResponseMessage implements Serializable {
         this.hit = hit;
         this.ownBoard = ownBoard;
     }
+
     //Trả về ship đã bị chìm trong quá trình di chuyển.
     // Trả về null nếu việc di chuyển không dẫn đến chìm tàu.
     public Ship shipSank() {
         return this.shipSunk;
     }
+
     public int getX() {
         return x;
     }
+
     public int getY() {
         return y;
     }
+
     public boolean isHit() {
         return hit;
     }

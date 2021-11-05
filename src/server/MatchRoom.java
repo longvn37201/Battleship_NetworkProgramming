@@ -63,8 +63,7 @@ public class MatchRoom {
     //  để người chơi join vào danh sách phòng chờ
     private synchronized void joinWaitingList(Player player) {
         waitingPlayerList.put(player.getOwnKey(), player);
-        player.writeNotification(NotificationCode.GAME_TOKEN,
-                player.getOwnKey());
+        player.writeNotification(NotificationCode.GAME_TOKEN, player.getOwnKey());
         sendMatchRoomList();
     }
 
@@ -93,8 +92,7 @@ public class MatchRoom {
     //player acp request từ player có key được cung cấp
     private synchronized void acceptRequest(Player player, String key) {
         Player opponent = waitingPlayerList.get(key);
-        if (opponent != null &&
-                opponent.getRequestedGameKey().equals(player.getOwnKey())) {
+        if (opponent != null && opponent.getRequestedGameKey().equals(player.getOwnKey())) {
             waitingPlayerList.remove(key);
             waitingPlayerList.values().remove(player);
             opponent.requestAccepted(player);
