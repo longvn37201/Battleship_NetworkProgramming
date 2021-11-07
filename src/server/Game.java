@@ -6,14 +6,14 @@ import model.game.Square;
 import model.messages.MoveMessage;
 import model.messages.MoveResponseMessage;
 import model.messages.NotificationMessage;
-import util.NotificationCode;
+import util.Constants;
 
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static util.Configs.*;
-import static util.NotificationCode.*;
+import static util.Constants.Configs.*;
+import static util.Constants.NotificationCode.*;
 
 public class Game {
 
@@ -37,9 +37,9 @@ public class Game {
         NotificationMessage placeShipsMessage = new NotificationMessage(PLACE_SHIPS);
 
         player1.writeObject(placeShipsMessage);
-        System.out.println(">> " + player1.socket.getRemoteSocketAddress().toString() + " " + NotificationCode.PLACE_SHIPS);
+        System.out.println(">> " + player1.socket.getRemoteSocketAddress().toString() + " " + Constants.NotificationCode.PLACE_SHIPS);
         player2.writeObject(placeShipsMessage);
-        System.out.println(">> " + player2.socket.getRemoteSocketAddress().toString() + " " + NotificationCode.PLACE_SHIPS);
+        System.out.println(">> " + player2.socket.getRemoteSocketAddress().toString() + " " + Constants.NotificationCode.PLACE_SHIPS);
 
         placementTimer = new Timer();
         placementTimer.schedule(new PlacementTimerTask(), PLACEMENT_TIMEOUT);
@@ -99,23 +99,23 @@ public class Game {
         int y = move.getY();
         int max = BOARD_DIMENSION;
 
-        System.out.println("<< " + player.socket.getRemoteSocketAddress().toString() + " " + NotificationCode.SHOT + " " + x + " " + y);
+        System.out.println("<< " + player.socket.getRemoteSocketAddress().toString() + " " + Constants.NotificationCode.SHOT + " " + x + " " + y);
 
         if (player != turn) {
-            System.out.println(">> " + player.socket.getRemoteSocketAddress().toString() + " " + NotificationCode.NOT_YOUR_TURN);
-            player.writeNotification(NotificationCode.NOT_YOUR_TURN);
+            System.out.println(">> " + player.socket.getRemoteSocketAddress().toString() + " " + Constants.NotificationCode.NOT_YOUR_TURN);
+            player.writeNotification(Constants.NotificationCode.NOT_YOUR_TURN);
             return;
         }
 
         if (x < 0 || x >= max || y < 0 || y >= max) {
-            System.out.println(">> " + player.socket.getRemoteSocketAddress().toString() + " " + NotificationCode.INVALID_MOVE);
-            player.writeNotification(NotificationCode.INVALID_MOVE);
+            System.out.println(">> " + player.socket.getRemoteSocketAddress().toString() + " " + Constants.NotificationCode.INVALID_MOVE);
+            player.writeNotification(Constants.NotificationCode.INVALID_MOVE);
         } else {
             Player opponent = getOpponent(player);
             Square square = opponent.getBoard().getSquare(x, y);
             if (square.isGuessed()) {
-                System.out.println(">> " + player.socket.getRemoteSocketAddress().toString() + " " + NotificationCode.REPEATED_MOVE);
-                player.writeNotification(NotificationCode.REPEATED_MOVE);
+                System.out.println(">> " + player.socket.getRemoteSocketAddress().toString() + " " + Constants.NotificationCode.REPEATED_MOVE);
+                player.writeNotification(Constants.NotificationCode.REPEATED_MOVE);
                 return;
             }
 
@@ -131,14 +131,14 @@ public class Game {
             response.setOwnBoard(true);
             opponent.writeObject(response);
 
-            System.out.println(">> " + opponent.socket.getRemoteSocketAddress().toString() + " " + NotificationCode.SHOT + " " + x + " " + y);
+            System.out.println(">> " + opponent.socket.getRemoteSocketAddress().toString() + " " + Constants.NotificationCode.SHOT + " " + x + " " + y);
 
             if (opponent.getBoard().gameOver()) {
-                System.out.println(">> " + turn.socket.getRemoteSocketAddress().toString() + " " + NotificationCode.GAME_WIN);
-                turn.writeNotification(NotificationCode.GAME_WIN);
+                System.out.println(">> " + turn.socket.getRemoteSocketAddress().toString() + " " + Constants.NotificationCode.GAME_WIN);
+                turn.writeNotification(Constants.NotificationCode.GAME_WIN);
 
-                System.out.println(">> " + opponent.socket.getRemoteSocketAddress().toString() + " " + NotificationCode.GAME_LOSE);
-                opponent.writeNotification(NotificationCode.GAME_LOSE);
+                System.out.println(">> " + opponent.socket.getRemoteSocketAddress().toString() + " " + Constants.NotificationCode.GAME_LOSE);
+                opponent.writeNotification(Constants.NotificationCode.GAME_LOSE);
                 turn = null;
             } else if (hit) {
                 setTurn(player); // player gets another go if hit
@@ -152,21 +152,21 @@ public class Game {
         @Override
         public void run() {
             if (player1.getBoard() == null & player2.getBoard() == null) {
-                NotificationMessage draw = new NotificationMessage(NotificationCode.TIMEOUT_DRAW);
+                NotificationMessage draw = new NotificationMessage(Constants.NotificationCode.TIMEOUT_DRAW);
                 player1.writeObject(draw);
                 player2.writeObject(draw);
-                System.out.println(">> " + player1.socket.getRemoteSocketAddress().toString() + " " + NotificationCode.TIMEOUT_DRAW);
-                System.out.println(">> " + player2.socket.getRemoteSocketAddress().toString() + " " + NotificationCode.TIMEOUT_DRAW);
+                System.out.println(">> " + player1.socket.getRemoteSocketAddress().toString() + " " + Constants.NotificationCode.TIMEOUT_DRAW);
+                System.out.println(">> " + player2.socket.getRemoteSocketAddress().toString() + " " + Constants.NotificationCode.TIMEOUT_DRAW);
                 killGame();
             } else if (player1.getBoard() == null) {
                 // Player1 failed to place ships in time
-                player1.writeNotification(NotificationCode.TIMEOUT_LOSE);
-                player2.writeNotification(NotificationCode.TIMEOUT_WIN);
+                player1.writeNotification(Constants.NotificationCode.TIMEOUT_LOSE);
+                player2.writeNotification(Constants.NotificationCode.TIMEOUT_WIN);
                 killGame();
             } else if (player2.getBoard() == null) {
                 // Player2 failed to place ships in time
-                player1.writeNotification(NotificationCode.TIMEOUT_WIN);
-                player2.writeNotification(NotificationCode.TIMEOUT_LOSE);
+                player1.writeNotification(Constants.NotificationCode.TIMEOUT_WIN);
+                player2.writeNotification(Constants.NotificationCode.TIMEOUT_LOSE);
                 killGame();
             }
         }
@@ -176,8 +176,8 @@ public class Game {
         @Override
         public void run() {
             if (turn != null) {
-                turn.writeNotification(NotificationCode.TIMEOUT_LOSE);
-                getOpponent(turn).writeNotification(NotificationCode.TIMEOUT_WIN);
+                turn.writeNotification(Constants.NotificationCode.TIMEOUT_LOSE);
+                getOpponent(turn).writeNotification(Constants.NotificationCode.TIMEOUT_WIN);
                 killGame();
             }
         }

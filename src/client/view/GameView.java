@@ -12,9 +12,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import static util.Configs.PLACEMENT_TIMEOUT;
+import static util.Constants.Configs.PLACEMENT_TIMEOUT;
 
-public class ClientView extends JFrame {
+public class GameView extends JFrame {
 
     private JTextField inputField = new JTextField();
     private JButton rotateButton = new JButton("Xoay");
@@ -22,13 +22,13 @@ public class ClientView extends JFrame {
     private JScrollPane chatScrollPane;
     private JList<String> chat = new JList<>();
     private DefaultListModel<String> chatModel = new DefaultListModel<>();
-    private Client model;
-    private MatchRoom matchRoom;
+    private GameHandler model;
+    private Client client;
     private JLabel timerView;
     private JLabel message;
     private Timer timer;
 
-    public ClientView(ObjectOutputStream out, final ObjectInputStream in, final MatchRoom matchRoom) {
+    public GameView(ObjectOutputStream out, final ObjectInputStream in, final Client client) {
         chat.setModel(chatModel);
 
         JPanel rootPanel = new JPanel(new BorderLayout(5, 5));
@@ -37,9 +37,9 @@ public class ClientView extends JFrame {
         final BoardView myBoard = new BoardView(true);
         final BoardView enemyBoard = new BoardView(false);
 
-        model = new Client(this, myBoard.getModel(), enemyBoard.getModel(),
+        model = new GameHandler(this, myBoard.getModel(), enemyBoard.getModel(),
                 out, in);
-        this.matchRoom = matchRoom;
+        this.client = client;
 
         JPanel controlPanel = new JPanel(new BorderLayout(10, 5));
         chatScrollPane = new JScrollPane(chat);
@@ -113,7 +113,7 @@ public class ClientView extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
-                matchRoom.reopen();
+                client.reopen();
             }
         });
         setTimer(PLACEMENT_TIMEOUT / 1000);
@@ -153,7 +153,7 @@ public class ClientView extends JFrame {
         try {
             String text = inputField.getText();
             model.sendChatMessage(text);
-            addChatMessage("<b>" + matchRoom.getOwnName() + ":</b> " + text);
+            addChatMessage("<b>" + client.getOwnName() + ":</b> " + text);
             inputField.setText("");
         } catch (IOException e1) {
             e1.printStackTrace();
@@ -174,7 +174,7 @@ public class ClientView extends JFrame {
         rotateButton.setEnabled(state);
     }
 
-    public Client getModel() {
+    public GameHandler getModel() {
         return this.model;
     }
 
@@ -186,7 +186,7 @@ public class ClientView extends JFrame {
                 options, options[0]);
         switch (n) {
             case 0:
-                matchRoom.reopen();
+                client.reopen();
                 break;
             case 1:
                 System.exit(0);

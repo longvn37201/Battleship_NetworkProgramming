@@ -1,6 +1,6 @@
 package model.game;
 
-import client.Client;
+import client.GameHandler;
 import model.messages.MoveResponseMessage;
 
 import java.beans.PropertyChangeEvent;
@@ -9,13 +9,13 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import static util.Configs.BOARD_DIMENSION;
+import static util.Constants.Configs.BOARD_DIMENSION;
 
 public class Board implements Serializable {
     private Square[][] squares;
     private ArrayList<Ship> ships;
     private boolean ownBoard;
-    private transient Client client;
+    private transient GameHandler gameHandler;
     private transient boolean boatPositionLocked = true;
     private transient ArrayList<PropertyChangeListener> changeListeners;
 
@@ -65,7 +65,7 @@ public class Board implements Serializable {
 
     public void setBoatPositionLocked(boolean boatPositionLocked) {
         this.boatPositionLocked = boatPositionLocked;
-        client.getView().setSendShipState(!boatPositionLocked);
+        gameHandler.getView().setSendShipState(!boatPositionLocked);
         firePropertyChange("resetSelectedShip", null, null);
     }
 
@@ -186,7 +186,7 @@ public class Board implements Serializable {
                 boardSquare.update(true, ship);
             }
             // TODO: Fix me
-            client.getView().addChatMessage("SUNK SHIP");
+            gameHandler.getView().addChatMessage("SUNK SHIP");
         } else {
             Square square = getSquare(move.getX(), move.getY());
             square.update(move.isHit(), null);
@@ -244,7 +244,7 @@ public class Board implements Serializable {
 
     //Gửi một move tại các tọa độ được cung cấp tới ObjectOutputStream của client
     public void sendMove(int x, int y) throws IOException {
-        client.sendMove(x, y);
+        gameHandler.sendMove(x, y);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -256,12 +256,12 @@ public class Board implements Serializable {
         firePropertyChange("rotateSelectedShip", null, null);
     }
 
-    public Client getClient() {
-        return client;
+    public GameHandler getClient() {
+        return gameHandler;
     }
 
-    public void setClient(Client client) {
-        this.client = client;
+    public void setClient(GameHandler gameHandler) {
+        this.gameHandler = gameHandler;
     }
 
     private void firePropertyChange(String property, Object oldValue, Object newValue) {

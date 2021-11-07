@@ -2,16 +2,19 @@ package server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-import static util.Configs.PORT_NUMBER;
+import static util.Constants.Configs.PORT_NUMBER;
 
-public class MainServer {
+public class Server {
+    private HashMap<String, Player> waitingPlayerList = new HashMap<String, Player>();
+    private ArrayList<Player> connectedPlayers = new ArrayList<>();
 
-    public MainServer(int portNumber) {
+    public Server(int portNumber) {
         try {
             ServerSocket serverSocket = new ServerSocket(portNumber);
             System.out.println("SERVER ĐANG CHẠY Ở CỔNG: " + portNumber);
-
             MatchRoom matchRoom = new MatchRoom();
             while (true) {
                 new Player(serverSocket.accept(), matchRoom).start();
@@ -21,8 +24,7 @@ public class MainServer {
         }
     }
 
-    public static void main(String[] args) throws InterruptedException {
-        new MainServer(PORT_NUMBER);
+    public static void main(String[] args) {
+        new Server(PORT_NUMBER);
     }
-
 }

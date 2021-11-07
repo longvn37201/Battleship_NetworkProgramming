@@ -6,8 +6,8 @@ Báo cáo 1
             + Model
         - Sử dụng giao thức TCP/IP
     b) Các chức năng chính:
-        - Server: khởi tạo 1 Server socket, lắng nghe kết nối từ người chơi, xử lí các thông
-            điệp từ các người chơi, khởi tạo 1 MathRoom
+        - Server: khởi tạo 1 Server socket, lắng nghe kết nối từ người chơi,
+        khởi tạo 1 MathRoom chứa thông tin các người chơi ,xử lí các thông điệp từ các người chơi,
         - Client: kết nối đăng nhập đến server, gửi lời mời chơi và chơi cùng các người chơi khác
             thông qua giao diện GUI.
     c) Thư viện:

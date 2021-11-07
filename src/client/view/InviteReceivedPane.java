@@ -1,6 +1,6 @@
 package client.view;
 
-import client.MatchRoom;
+import client.Client;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,10 +8,10 @@ import java.awt.*;
 public class InviteReceivedPane extends JOptionPane {
 
     private JDialog dialog;
-    private MatchRoom matchRoom;
+    private Client client;
     private String key;
 
-    public InviteReceivedPane(String key, String name, MatchRoom matchRoom) {
+    public InviteReceivedPane(String key, String name, Client client) {
         super();
         this.setMessage(name + " muốn thách đấu bạn.");
         this.setMessageType(QUESTION_MESSAGE);
@@ -19,7 +19,7 @@ public class InviteReceivedPane extends JOptionPane {
         String[] options = {"Ok", "Hủy"};
         this.setOptions(options);
         this.key = key;
-        this.matchRoom = matchRoom;
+        this.client = client;
     }
 
     public void showOptionPane(Component parent) {
@@ -27,9 +27,9 @@ public class InviteReceivedPane extends JOptionPane {
         dialog.setVisible(true);
         dialog.dispose();
         if (getValue() == "Ok") {
-            matchRoom.sendStringArray(new String[]{"join", "accept", key});
+            client.sendStringArray(new String[]{"join", "accept", key});
         } else if (getValue() == "Hủy") {
-            matchRoom.sendStringArray(new String[]{"join", "reject", key});
+            client.sendStringArray(new String[]{"join", "reject", key});
         }
     }
 

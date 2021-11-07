@@ -13,7 +13,7 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static util.Configs.BOARD_DIMENSION;
+import static util.Constants.Configs.BOARD_DIMENSION;
 
 public class BoardView extends JPanel implements PropertyChangeListener {
 

@@ -1,6 +1,6 @@
 package client.view;
 
-import client.MatchRoom;
+import client.Client;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -14,17 +14,17 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MatchRoomView extends JFrame {
+public class WaitingRoomView extends JFrame {
 
-    private MatchRoom matchRoom;
+    private Client client;
     private DefaultListModel<RoomPlayer> playersListModel = new DefaultListModel<RoomPlayer>();
     private boolean firstTimeListing = true;
-    private HashMap<String, String> matchRoomList;
+    private HashMap<String, String> waitingList;
     private JList<RoomPlayer> playersList;
     private JButton sendInvite;
     private JLabel playersNumber;
 
-    public MatchRoomView() {
+    public WaitingRoomView() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             SwingUtilities.updateComponentTreeUI(this);
@@ -46,7 +46,7 @@ public class MatchRoomView extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 RoomPlayer player = playersList.getSelectedValue();
-                matchRoom.sendJoinGameRequest(player.getKey(), player.getName());
+                client.sendJoinGameRequest(player.getKey(), player.getName());
             }
         });
 
@@ -70,9 +70,9 @@ public class MatchRoomView extends JFrame {
         setLocationRelativeTo(null);
         pack();
 
-        this.matchRoom = new MatchRoom(this);
+        this.client = new Client(this);
         createNickname();
-        matchRoom.joinLobby();
+        client.joinLobby();
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
@@ -87,7 +87,7 @@ public class MatchRoomView extends JFrame {
             RoomPlayer player = playersList.getSelectedValue();
 
             if (player != null) {
-                matchRoom.sendJoinGameRequest(player.getKey(), player.getName());
+                client.sendJoinGameRequest(player.getKey(), player.getName());
             }
         }
 
@@ -98,26 +98,23 @@ public class MatchRoomView extends JFrame {
         while (true) {
             String name = (String) JOptionPane.showInputDialog(this, message,
                     "Nickname", JOptionPane.PLAIN_MESSAGE, null, null, "");
-//            if (name == null) {
-//                System.exit(-1);
-//            }
-            this.matchRoom.sendName(name);
-            synchronized (matchRoom) {
+            this.client.sendName(name);
+            synchronized (client) {
                 try {
-                    if (matchRoom.getNameState() == MatchRoom.NameState.WAITING) {
-                        matchRoom.wait();
+                    if (client.getNameState() == Client.NameState.WAITING) {
+                        client.wait();
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-            MatchRoom.NameState state = matchRoom.getNameState();
-            if (state == MatchRoom.NameState.ACCEPTED) {
-                matchRoom.setOwnName(name);
+            Client.NameState state = client.getNameState();
+            if (state == Client.NameState.ACCEPTED) {
+                client.setOwnName(name);
                 break;
-            } else if (state == MatchRoom.NameState.INVALID) {
+            } else if (state == Client.NameState.INVALID) {
                 message = "Nickname không hợp lệ.";
-            } else if (state == MatchRoom.NameState.TAKEN) {
+            } else if (state == Client.NameState.TAKEN) {
                 message = "Nickname đã tồn tại, thử lại.";
             }
         }
@@ -125,7 +122,7 @@ public class MatchRoomView extends JFrame {
 
     public boolean playerNameExists(String name) {
         boolean exists = false;
-        for (Map.Entry<String, String> entry : matchRoomList.entrySet()) {
+        for (Map.Entry<String, String> entry : waitingList.entrySet()) {
             if (entry.getValue().equals(name)) {
                 return true;
             }
@@ -133,12 +130,12 @@ public class MatchRoomView extends JFrame {
         return exists;
     }
 
-    public synchronized void updateMatchRoomList(HashMap<String, String> matchRoomList) {
-        this.matchRoomList = matchRoomList;
+    public synchronized void updateWaitingList(HashMap<String, String> waitingList) {
+        this.waitingList = waitingList;
         this.playersListModel.clear();
-        for (Map.Entry<String, String> entry : matchRoomList.entrySet()) {
+        for (Map.Entry<String, String> entry : waitingList.entrySet()) {
             String key = entry.getKey();
-            if (!key.equals(matchRoom.getKey())) {
+            if (!key.equals(client.getKey())) {
                 String name = entry.getValue();
                 RoomPlayer player = new RoomPlayer(key, name);
                 this.playersListModel.addElement(player);
@@ -151,7 +148,7 @@ public class MatchRoomView extends JFrame {
     }
 
     public static void main(String[] args) {
-        new MatchRoomView();
+        new WaitingRoomView();
     }
 
     private class RoomPlayer {
